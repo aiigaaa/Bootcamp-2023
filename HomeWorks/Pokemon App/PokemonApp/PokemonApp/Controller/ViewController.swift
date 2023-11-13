@@ -91,6 +91,46 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
      func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 110}
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ShowDetail", let indexPath = tableViewController.indexPathForSelectedRow {
+            if let detailViewController = segue.destination as? DetailViewController {
+                if let card = pokemon?.cards[indexPath.row] {
+                    detailViewController.pokemonName = card.name
+                    detailViewController.pokemonImageURL = card.imageURL
+                    detailViewController.pokemonType = card.types?.joined(separator:  ", ") ?? ""
+                    detailViewController.pokemonCardSet = card.cardSet ?? ""
+                    
+                    
+                    
+                    if let    resistance = card.resistances{
+                        detailViewController.pokemonResistances = resistance.map {
+                            if let type = $0.type?.rawValue {
+                                return "\(type): \($0.value ?? "")"}
+                            else {
+                                return "Unknown Resistance: \($0.value ?? "")"
+                            }
+                        }.joined(separator: "\n")
+                    } else {
+                        detailViewController.pokemonResistances = "None"
+                    }
+                    
+                    
+                    if let attack = card.attacks {
+                        detailViewController.pokemonAttack = attack.map{
+                            if let name = $0.name {
+                                return "\(name): \($0.text ?? "")"}
+                            else {
+                                return "Unnamed Attack: \($0.text ?? "")"
+                            }
+                        }.joined(separator: "\n")}
+                    else {
+                        detailViewController.pokemonAttack = "None"
+                    }
+                }
+            }
+        }
+    }
 
 }
 
